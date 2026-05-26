@@ -58,13 +58,14 @@ export default function Contact() {
               <Button asChild variant="outline" className="w-full justify-start rounded-2xl h-14 border-2">
                 <a href="mailto:info@drabidalikhan.com"><Mail className="w-5 h-5 mr-3" /> info@drabidalikhan.com</a>
               </Button>
-              <Button asChild variant="outline" className="w-full justify-start rounded-2xl h-14 border-2 hover:bg-primary/5 hover:text-primary transition-all duration-300">
+              <Button asChild variant="outline" className="w-full justify-start rounded-2xl h-auto py-3 border-2 hover:bg-primary/5 hover:text-primary transition-all duration-300 whitespace-normal text-left">
                 <a 
                   href="https://maps.google.com/?q=Basham+Plaza+opposite+King+Abdullah+Teaching+Hospital+Mansehra" 
                   target="_blank" 
                   rel="noreferrer"
                 >
-                  <MapPin className="w-5 h-5 mr-3 text-accent" /> Basham Plaza opposite to King Abdullah Teaching Hospital, Mansehra
+                  <MapPin className="w-5 h-5 mr-3 text-accent flex-shrink-0" /> 
+                  <span>Basham Plaza opposite to King Abdullah Teaching Hospital, Mansehra</span>
                 </a>
               </Button>
             </div>

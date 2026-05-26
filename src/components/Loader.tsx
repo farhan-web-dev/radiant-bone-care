@@ -15,7 +15,7 @@ export default function Loader() {
         <motion.div
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-[100] grid place-items-center bg-background"
+          className="fixed top-0 left-0 w-screen h-screen z-[100] flex items-center justify-center bg-background"
         >
           <motion.div
             animate={{ scale: [1, 1.1, 1], rotate: [0, 8, -8, 0] }}
