@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
-import { GraduationCap, Briefcase, Heart, BadgeCheck } from "lucide-react";
+import { GraduationCap, Briefcase, Heart } from "lucide-react";
+import clinicImg from "@/assets/clinic-interior.jpg";
+
 
 const cards = [
   { icon: GraduationCap, title: "Qualifications", text: "MBBS, FCPS Orthopedics — Trained in fracture, trauma and joint reconstruction." },
