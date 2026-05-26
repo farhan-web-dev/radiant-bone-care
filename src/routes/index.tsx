@@ -9,7 +9,7 @@ import Appointment from "@/components/Appointment";
 import Testimonials from "@/components/Testimonials";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import ScrollToTop from "@/components/ScrollToTop";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import Loader from "@/components/Loader";
 
 export const Route = createFileRoute("/")({
@@ -43,7 +43,7 @@ function Index() {
         <Contact />
       </main>
       <Footer />
-      <ScrollToTop />
+      <WhatsAppButton />
     </div>
   );
 }
