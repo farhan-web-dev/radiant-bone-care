@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
-import { GraduationCap, Briefcase, Heart, BadgeCheck } from "lucide-react";
+import { GraduationCap, Briefcase, Heart } from "lucide-react";
+import clinicImg from "@/assets/clinic-interior.jpg";
+
 
 const cards = [
   { icon: GraduationCap, title: "Qualifications", text: "MBBS, FCPS Orthopedics — Trained in fracture, trauma and joint reconstruction." },
@@ -18,14 +20,15 @@ export default function About() {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-elegant relative bg-gradient-primary">
-              {/* Placeholder for clinic / professional image */}
-              <div className="absolute inset-0 grid place-items-center text-primary-foreground/80">
-                <div className="text-center">
-                  <BadgeCheck className="w-16 h-16 mx-auto mb-4 opacity-80" />
-                  <p className="text-sm uppercase tracking-widest">Clinic Image Placeholder</p>
-                </div>
-              </div>
+            <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-elegant relative">
+              <img
+                src={clinicImg}
+                alt="Dr. Abid Ali Khan's modern orthopedic clinic interior"
+                width={1024}
+                height={1280}
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
             </div>
           </motion.div>
 
