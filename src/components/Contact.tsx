@@ -58,8 +58,14 @@ export default function Contact() {
               <Button asChild variant="outline" className="w-full justify-start rounded-2xl h-14 border-2">
                 <a href="mailto:info@drabidalikhan.com"><Mail className="w-5 h-5 mr-3" /> info@drabidalikhan.com</a>
               </Button>
-              <Button asChild variant="outline" className="w-full justify-start rounded-2xl h-14 border-2">
-                <a href="#"><MapPin className="w-5 h-5 mr-3" /> Clinic Address Placeholder</a>
+              <Button asChild variant="outline" className="w-full justify-start rounded-2xl h-14 border-2 hover:bg-primary/5 hover:text-primary transition-all duration-300">
+                <a 
+                  href="https://maps.google.com/?q=Basham+Plaza+opposite+King+Abdullah+Teaching+Hospital+Mansehra" 
+                  target="_blank" 
+                  rel="noreferrer"
+                >
+                  <MapPin className="w-5 h-5 mr-3 text-accent" /> Basham Plaza opposite to King Abdullah Teaching Hospital, Mansehra
+                </a>
               </Button>
             </div>
 
@@ -77,15 +83,16 @@ export default function Contact() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="rounded-3xl overflow-hidden shadow-elegant min-h-[400px] bg-gradient-primary relative"
+            className="rounded-3xl overflow-hidden shadow-elegant min-h-[400px] bg-card border border-border relative group"
           >
-            <div className="absolute inset-0 grid place-items-center text-primary-foreground/80 text-center p-8">
-              <div>
-                <MapPin className="w-16 h-16 mx-auto mb-4 opacity-80" />
-                <p className="font-display text-xl">Google Maps Placeholder</p>
-                <p className="text-sm opacity-70 mt-2">Clinic location will appear here</p>
-              </div>
-            </div>
+            <iframe
+              title="Basham Plaza opposite King Abdullah Teaching Hospital, Mansehra Map"
+              src="https://maps.google.com/maps?q=Basham%20Plaza%20opposite%20King%20Abdullah%20Teaching%20Hospital%20Mansehra&t=&z=16&ie=UTF8&iwloc=&output=embed"
+              className="w-full h-full min-h-[400px] border-0"
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </motion.div>
         </div>
       </div>

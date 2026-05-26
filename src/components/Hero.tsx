@@ -44,9 +44,9 @@ export default function Hero() {
             </h1>
 
             <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
-              <span className="font-semibold text-foreground">Dr. Abid Ali Khan</span> — Specialist
-              in Orthopedic Surgery, Trauma, and Bone &amp; Joint Care. Compassionate,
-              evidence-based treatment for lasting mobility.
+              <span className="font-semibold text-foreground">Dr. Abid Ali Khan</span> — Assistant Professor 
+              and Consultant Orthopaedic &amp; Trauma Surgeon. Expert care for fractures, joint pain, 
+              limb reconstruction, and trauma recovery.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">

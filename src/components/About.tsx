@@ -2,11 +2,31 @@ import { motion } from "framer-motion";
 import { GraduationCap, Briefcase, Heart } from "lucide-react";
 import clinicImg from "@/assets/clinic-interior.jpg";
 
-
 const cards = [
-  { icon: GraduationCap, title: "Qualifications", text: "MBBS, FCPS Orthopedics — Trained in fracture, trauma and joint reconstruction." },
-  { icon: Briefcase, title: "Experience", text: "15+ years managing complex orthopedic & trauma cases across leading hospitals." },
-  { icon: Heart, title: "Patient Care", text: "Personalised treatment plans built on empathy, transparency and recovery outcomes." },
+  { 
+    icon: GraduationCap, 
+    title: "Qualifications", 
+    text: "MBBS (Pb), FCPS (Ortho. Surgery), IMM (Gen. Surgery), FIAS, Fellowship Ilizarov, Certified AO Trauma." 
+  },
+  { 
+    icon: Briefcase, 
+    title: "Experience", 
+    text: "Assistant Professor & Consultant Orthopaedic Surgeon with 15+ years of clinical and academic leadership." 
+  },
+  { 
+    icon: Heart, 
+    title: "Patient Care", 
+    text: "Personalised treatment plans built on empathy, transparency and surgical recovery outcomes." 
+  },
+];
+
+const degrees = [
+  { name: "MBBS (Pb)", label: "Bachelor of Medicine & Surgery" },
+  { name: "FCPS (Ortho. Surgery)", label: "Fellowship of College of Physicians & Surgeons" },
+  { name: "IMM (Gen. Surgery)", label: "Intermediate Module in General Surgery" },
+  { name: "FIAS (Pakistan)", label: "Fellow of International Association of Surgeons" },
+  { name: "Fellowship Ilizarov", label: "Specialist in Advanced Reconstructive Surgery" },
+  { name: "Certified AO-Trauma", label: "Global Standard in Fracture & Trauma Care" },
 ];
 
 export default function About() {
@@ -43,11 +63,30 @@ export default function About() {
               A surgeon devoted to <span className="gradient-text">movement & recovery.</span>
             </h2>
             <p className="mt-6 text-muted-foreground leading-relaxed">
-              Dr. Abid Ali Khan is a PMDC-registered Orthopedic &amp; Trauma Specialist with
-              deep expertise in fractures, bone injuries, joint pain, trauma care and reconstructive
-              orthopedic surgery. He blends modern surgical techniques with personalised
-              rehabilitation to bring patients back to an active life.
+              Dr. Abid Ali Khan is an **Assistant Professor** and PMDC-registered **Consultant Orthopaedic &amp; Trauma Surgeon**. 
+              With deep clinical expertise in complex fractures, bone injuries, joint pain, limb reconstructive surgery, and trauma care, 
+              he blends international medical standards with compassionate rehabilitation to help patients regain full mobility.
             </p>
+
+            {/* Degrees & Board Certifications Grid */}
+            <div className="mt-8">
+              <h4 className="text-xs font-bold text-foreground/80 uppercase tracking-widest mb-4">Board Certifications &amp; Degrees</h4>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {degrees.map((deg, i) => (
+                  <motion.div
+                    key={deg.name}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.05 }}
+                    className="glass rounded-xl p-3 shadow-soft border border-border/80 hover:border-accent/30 transition-all flex flex-col justify-between"
+                  >
+                    <span className="text-xs font-bold text-primary font-sans leading-tight">{deg.name}</span>
+                    <span className="text-[10px] text-muted-foreground font-medium mt-1 leading-tight">{deg.label}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
 
             <div className="mt-8 grid sm:grid-cols-3 gap-4">
               {cards.map((c, i) => (
@@ -68,7 +107,9 @@ export default function About() {
 
             <div className="mt-10 pt-6 border-t border-border">
               <div className="font-display italic text-2xl text-primary">— Dr. Abid Ali Khan</div>
-              <div className="text-xs text-muted-foreground mt-1 tracking-widest uppercase">Orthopedic & Trauma Specialist</div>
+              <div className="text-xs text-muted-foreground mt-1 tracking-widest uppercase font-semibold">
+                Assistant Professor &amp; Consultant Orthopaedic Surgeon
+              </div>
             </div>
           </motion.div>
         </div>
