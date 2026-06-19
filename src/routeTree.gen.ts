@@ -9,38 +9,146 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as BookingSuccessRouteImport } from './routes/booking/success'
+import { Route as BookingCancelRouteImport } from './routes/booking/cancel'
+import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
+import { Route as AdminPatientsRouteImport } from './routes/admin/patients'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminAppointmentsRouteImport } from './routes/admin/appointments'
 
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const BookingSuccessRoute = BookingSuccessRouteImport.update({
+  id: '/booking/success',
+  path: '/booking/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingCancelRoute = BookingCancelRouteImport.update({
+  id: '/booking/cancel',
+  path: '/booking/cancel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminPatientsRoute = AdminPatientsRouteImport.update({
+  id: '/patients',
+  path: '/patients',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAppointmentsRoute = AdminAppointmentsRouteImport.update({
+  id: '/appointments',
+  path: '/appointments',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/admin/appointments': typeof AdminAppointmentsRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/patients': typeof AdminPatientsRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/booking/cancel': typeof BookingCancelRoute
+  '/booking/success': typeof BookingSuccessRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin/appointments': typeof AdminAppointmentsRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/patients': typeof AdminPatientsRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/booking/cancel': typeof BookingCancelRoute
+  '/booking/success': typeof BookingSuccessRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/admin/appointments': typeof AdminAppointmentsRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/patients': typeof AdminPatientsRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/booking/cancel': typeof BookingCancelRoute
+  '/booking/success': typeof BookingSuccessRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/admin/appointments'
+    | '/admin/login'
+    | '/admin/patients'
+    | '/admin/payments'
+    | '/booking/cancel'
+    | '/booking/success'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin/appointments'
+    | '/admin/login'
+    | '/admin/patients'
+    | '/admin/payments'
+    | '/booking/cancel'
+    | '/booking/success'
+    | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/admin/appointments'
+    | '/admin/login'
+    | '/admin/patients'
+    | '/admin/payments'
+    | '/booking/cancel'
+    | '/booking/success'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  BookingCancelRoute: typeof BookingCancelRoute
+  BookingSuccessRoute: typeof BookingSuccessRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +156,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/booking/success': {
+      id: '/booking/success'
+      path: '/booking/success'
+      fullPath: '/booking/success'
+      preLoaderRoute: typeof BookingSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking/cancel': {
+      id: '/booking/cancel'
+      path: '/booking/cancel'
+      fullPath: '/booking/cancel'
+      preLoaderRoute: typeof BookingCancelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/payments': {
+      id: '/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AdminPaymentsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/patients': {
+      id: '/admin/patients'
+      path: '/patients'
+      fullPath: '/admin/patients'
+      preLoaderRoute: typeof AdminPatientsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/appointments': {
+      id: '/admin/appointments'
+      path: '/appointments'
+      fullPath: '/admin/appointments'
+      preLoaderRoute: typeof AdminAppointmentsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminAppointmentsRoute: typeof AdminAppointmentsRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminPatientsRoute: typeof AdminPatientsRoute
+  AdminPaymentsRoute: typeof AdminPaymentsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAppointmentsRoute: AdminAppointmentsRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminPatientsRoute: AdminPatientsRoute,
+  AdminPaymentsRoute: AdminPaymentsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
+  BookingCancelRoute: BookingCancelRoute,
+  BookingSuccessRoute: BookingSuccessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

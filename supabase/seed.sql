@@ -1,0 +1,12 @@
+-- Optional seed data for local development.
+-- Admin users must be linked to an existing auth.users row.
+--
+-- After creating an admin in Supabase Auth (Dashboard → Authentication → Users),
+-- replace the placeholders below and run:
+--   supabase db reset   (local)
+-- or execute manually in the SQL editor (hosted project).
+
+-- Example (uncomment and edit after creating the auth user):
+-- INSERT INTO public.admin_users (user_id, email)
+-- VALUES ('00000000-0000-0000-0000-000000000000', 'admin@example.com')
+-- ON CONFLICT (user_id) DO NOTHING;
