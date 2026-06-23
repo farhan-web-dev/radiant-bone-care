@@ -35,6 +35,7 @@ import {
   getClinicPaymentLink,
   getOnlineConsultationPaymentLink,
 } from "@/lib/env";
+import { uploadPaymentScreenshot, createManualPaymentAppointment } from "@/lib/booking-api";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Name is required").max(80),
@@ -84,9 +85,12 @@ export default function Appointment() {
   const [bookingType, setBookingType] = useState<"Online Consultation" | "Visit to Clinic">(
     "Online Consultation",
   );
-  const [clinicPaymentOption, setClinicPaymentOption] = useState<"clinic" | "online">("online");
-  const [detailsData, setDetailsData] = useState<FormData & { bookingType: string } | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"clinic" | "stripe" | "easypaisa" | "jazzcash">("stripe");
+  const [detailsData, setDetailsData] = useState<FormData & { bookingType: string; isManualPending?: boolean } | null>(null);
   const [txnId, setTxnId] = useState("");
+  
+  const [txnIdInput, setTxnIdInput] = useState("");
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
 
   const {
     register,
@@ -106,10 +110,9 @@ export default function Appointment() {
     },
   });
 
-  const baseFee = bookingType === "Online Consultation" ? 2000 : 2500;
-  const isPayingOnline =
-    bookingType === "Online Consultation" || clinicPaymentOption === "online";
-  const processingFee = isPayingOnline ? 50 : 0;
+  const baseFee = 1000;
+  const isStripe = paymentMethod === "stripe";
+  const processingFee = isStripe ? 50 : 0;
   const totalAmount = baseFee + processingFee;
 
   const onSubmit = async (data: FormData) => {
@@ -132,7 +135,7 @@ export default function Appointment() {
         message: data.message,
       };
 
-      if (bookingType === "Visit to Clinic" && clinicPaymentOption === "clinic") {
+      if (bookingType === "Visit to Clinic" && paymentMethod === "clinic") {
         const appointmentId = await createClinicAppointment({
           fullName: data.name,
           email: data.email,
@@ -150,6 +153,39 @@ export default function Appointment() {
         return;
       }
 
+      if (paymentMethod === "easypaisa" || paymentMethod === "jazzcash") {
+        if (!txnIdInput.trim()) {
+          throw new BookingError("Transaction ID is required for manual payments.");
+        }
+        
+        let screenshotUrl = undefined;
+        if (screenshotFile) {
+          screenshotUrl = await uploadPaymentScreenshot(screenshotFile);
+        }
+
+        const appointmentId = await createManualPaymentAppointment({
+          fullName: data.name,
+          email: data.email,
+          phone: data.phone,
+          appointmentDate: data.date,
+          appointmentTime: data.time,
+          notes: data.message,
+          service: data.service,
+          bookingType: bookingType === "Visit to Clinic" ? "clinic" : "online",
+          paymentMethod,
+          transactionId: txnIdInput.trim(),
+          paymentScreenshotUrl: screenshotUrl,
+        });
+
+        setTxnId(appointmentId.slice(0, 8).toUpperCase());
+        setDetailsData({ ...data, bookingType, isManualPending: true });
+        setSuccess(true);
+        reset();
+        setTxnIdInput("");
+        setScreenshotFile(null);
+        return;
+      }
+
       const sessionDetails = {
         name: data.name,
         phone: data.phone,
@@ -160,7 +196,7 @@ export default function Appointment() {
         bookingType,
       };
 
-      if (bookingType === "Visit to Clinic" && clinicPaymentOption === "online") {
+      if (bookingType === "Visit to Clinic" && paymentMethod === "stripe") {
         const paymentLink = getClinicPaymentLink();
         if (!paymentLink) {
           throw new BookingError("Clinic payment link is not configured.");
@@ -308,7 +344,10 @@ export default function Appointment() {
                 </span>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div
-                    onClick={() => setBookingType("Online Consultation")}
+                    onClick={() => {
+                      setBookingType("Online Consultation");
+                      if (paymentMethod === "clinic") setPaymentMethod("stripe");
+                    }}
                     className={`relative p-5 rounded-2xl cursor-pointer border-2 transition-all flex items-start gap-4 ${
                       bookingType === "Online Consultation"
                         ? "border-accent bg-accent/5 shadow-soft"
@@ -323,7 +362,7 @@ export default function Appointment() {
                       <p className="text-xs text-muted-foreground mt-1">
                         Consult via video call. Secure payment required.
                       </p>
-                      <div className="mt-3 font-semibold text-accent text-sm">PKR 2,000</div>
+                      <div className="mt-3 font-semibold text-accent text-sm">PKR 1,000</div>
                     </div>
                     {bookingType === "Online Consultation" && (
                       <div className="absolute top-4 right-4 text-accent">
@@ -348,7 +387,7 @@ export default function Appointment() {
                       <p className="text-xs text-muted-foreground mt-1">
                         In-person session. Online payment is optional.
                       </p>
-                      <div className="mt-3 font-semibold text-accent text-sm">PKR 2,500</div>
+                      <div className="mt-3 font-semibold text-accent text-sm">PKR 1,000</div>
                     </div>
                     {bookingType === "Visit to Clinic" && (
                       <div className="absolute top-4 right-4 text-accent">
@@ -359,72 +398,116 @@ export default function Appointment() {
                 </div>
               </div>
 
-              {bookingType === "Visit to Clinic" && (
+              <div className="pt-4 border-t border-border">
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="p-5 rounded-2xl bg-secondary border border-border"
                 >
                   <span className="block text-xs font-semibold tracking-wide uppercase text-muted-foreground mb-3">
-                    Clinic Payment Preference
+                    Payment Method
                   </span>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                    {bookingType === "Visit to Clinic" && (
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod("clinic")}
+                        className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${
+                          paymentMethod === "clinic"
+                            ? "bg-background border-accent font-semibold text-foreground shadow-sm"
+                            : "bg-background/60 border-border text-muted-foreground hover:bg-background"
+                        }`}
+                      >
+                        <Coins className="w-5 h-5 text-accent" />
+                        <span className="text-xs">Pay at Clinic</span>
+                      </button>
+                    )}
+
                     <button
                       type="button"
-                      onClick={() => setClinicPaymentOption("clinic")}
-                      className={`p-4 rounded-xl border flex items-center justify-between transition-all ${
-                        clinicPaymentOption === "clinic"
-                          ? "bg-background border-accent font-semibold text-foreground"
+                      onClick={() => setPaymentMethod("stripe")}
+                      className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${
+                        paymentMethod === "stripe"
+                          ? "bg-background border-accent font-semibold text-foreground shadow-sm"
                           : "bg-background/60 border-border text-muted-foreground hover:bg-background"
                       }`}
                     >
-                      <div className="flex items-center gap-2">
-                        <Coins className="w-4 h-4 text-accent" />
-                        <span className="text-sm">Pay at Clinic</span>
-                      </div>
-                      <div
-                        className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
-                          clinicPaymentOption === "clinic"
-                            ? "border-accent bg-accent"
-                            : "border-border"
-                        }`}
-                      >
-                        {clinicPaymentOption === "clinic" && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-white" />
-                        )}
-                      </div>
+                      <CreditCard className="w-5 h-5 text-accent" />
+                      <span className="text-xs text-center leading-tight">Pay Online<br/>(Card/Stripe)</span>
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => setClinicPaymentOption("online")}
-                      className={`p-4 rounded-xl border flex items-center justify-between transition-all ${
-                        clinicPaymentOption === "online"
-                          ? "bg-background border-accent font-semibold text-foreground"
+                      onClick={() => setPaymentMethod("easypaisa")}
+                      className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${
+                        paymentMethod === "easypaisa"
+                          ? "bg-easypaisa border-green-500 font-semibold text-foreground shadow-sm"
                           : "bg-background/60 border-border text-muted-foreground hover:bg-background"
                       }`}
                     >
-                      <div className="flex items-center gap-2">
-                        <CreditCard className="w-4 h-4 text-accent" />
-                        <span className="text-sm">Pay Online Now</span>
-                      </div>
-                      <div
-                        className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
-                          clinicPaymentOption === "online"
-                            ? "border-accent bg-accent"
-                            : "border-border"
-                        }`}
-                      >
-                        {clinicPaymentOption === "online" && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-white" />
-                        )}
-                      </div>
+                      <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">EP</div>
+                      <span className="text-xs">Easypaisa</span>
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("jazzcash")}
+                      className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${
+                        paymentMethod === "jazzcash"
+                          ? "bg-jazzcash border-red-500 font-semibold text-foreground shadow-sm"
+                          : "bg-background/60 border-border text-muted-foreground hover:bg-background"
+                      }`}
+                    >
+                      <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center text-[10px] text-white font-bold">JC</div>
+                      <span className="text-xs">JazzCash</span>
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+
+              {(paymentMethod === "easypaisa" || paymentMethod === "jazzcash") && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  className="p-5 rounded-xl bg-muted/30 border border-border space-y-4"
+                >
+                  <h4 className="font-semibold text-sm">Manual Payment Instructions</h4>
+                  <p className="text-xs text-muted-foreground">
+                    Please send exactly <strong>PKR {totalAmount.toLocaleString()}</strong> to our {paymentMethod === "easypaisa" ? "Easypaisa" : "JazzCash"} account below:
+                  </p>
+                  
+                  <div className="bg-background p-4 rounded-xl border border-border text-center flex flex-col items-center justify-center">
+                    <span className="text-[10px] tracking-widest uppercase text-muted-foreground font-semibold">Account Title</span>
+                    <span className="text-sm font-bold mb-3">Radiant Bone Care</span>
+                    
+                    <span className="text-[10px] tracking-widest uppercase text-muted-foreground font-semibold">Account Number</span>
+                    <span className="text-2xl font-display font-bold text-accent tracking-wider">0348 5661687</span>
+                  </div>
+
+                  <div className="space-y-3 pt-2">
+                    <Field label="Transaction / Reference ID *" error={submitError?.includes("Transaction") ? submitError : undefined}>
+                      <input 
+                        type="text" 
+                        value={txnIdInput} 
+                        onChange={(e) => { setTxnIdInput(e.target.value); setSubmitError(null); }}
+                        className={inputCls}
+                        placeholder="Enter the 11-digit or 12-digit Trx ID" 
+                      />
+                    </Field>
+                    
+                    <Field label="Payment Screenshot (Optional)">
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => setScreenshotFile(e.target.files?.[0] || null)}
+                        className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20 cursor-pointer"
+                      />
+                    </Field>
                   </div>
                 </motion.div>
               )}
 
-              {isPayingOnline && (
+              {isStripe && (
                 <div className="p-4 rounded-xl bg-muted/60 text-sm text-muted-foreground flex gap-3 items-start">
                   <Lock className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                   <p>
@@ -446,7 +529,7 @@ export default function Appointment() {
                   <span className="text-muted-foreground">Professional Fee</span>
                   <span className="font-semibold">PKR {baseFee.toLocaleString()}</span>
                 </div>
-                {isPayingOnline && (
+                {isStripe && (
                   <div className="flex justify-between text-xs">
                     <span className="text-muted-foreground">Digital Processing</span>
                     <span className="font-semibold">PKR {processingFee.toLocaleString()}</span>
@@ -475,9 +558,13 @@ export default function Appointment() {
               >
                 {isSubmitting ? (
                   <>Processing booking details…</>
-                ) : isPayingOnline ? (
+                ) : isStripe ? (
                   <>
                     <CreditCard className="w-4 h-4 mr-2" /> Continue to Secure Payment
+                  </>
+                ) : paymentMethod === "easypaisa" || paymentMethod === "jazzcash" ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 mr-2" /> Submit Payment & Book
                   </>
                 ) : (
                   <>
@@ -498,6 +585,11 @@ export default function Appointment() {
               <CheckCircle2 className="w-8 h-8 text-accent animate-bounce" />
             </div>
             <h3 className="font-display text-2xl font-bold">Booking Confirmed</h3>
+            {detailsData?.isManualPending && (
+              <div className="px-6 pb-2 text-center text-sm font-semibold text-accent animate-pulse">
+                Your order has been placed successfully. We will verify your payment and update the status shortly.
+              </div>
+            )}
             <p className="text-xs text-primary-foreground/80 mt-1">
               Your appointment registration is successfully processed
             </p>
@@ -552,7 +644,7 @@ export default function Appointment() {
                 <div className="flex justify-between">
                   <span className="text-xs text-muted-foreground">Payment Status</span>
                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-accent/20 text-accent border border-accent/25">
-                    PAY AT CLINIC
+                    {detailsData?.isManualPending ? "PENDING VERIFICATION" : "PAY AT CLINIC"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pt-2">

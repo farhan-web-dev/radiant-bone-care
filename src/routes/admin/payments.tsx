@@ -53,6 +53,16 @@ function AdminPaymentsPage() {
     onError: (err) => toast.error(err instanceof Error ? err.message : "Update failed."),
   });
 
+  const statusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: "paid" | "rejected" }) =>
+      updatePaymentStatus(id, status),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
+      toast.success(variables.status === "paid" ? "Payment approved." : "Payment rejected.");
+    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Update failed."),
+  });
+
   function handleExport() {
     if (data.length === 0) {
       toast.error("No payments to export.");
@@ -96,6 +106,8 @@ function AdminPaymentsPage() {
             <SelectItem value="all">All payments</SelectItem>
             <SelectItem value="paid">Paid</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="pending_verification">Pending Verification</SelectItem>
+            <SelectItem value="rejected">Rejected</SelectItem>
             <SelectItem value="refunded">Refunded</SelectItem>
           </SelectContent>
         </Select>
@@ -115,7 +127,8 @@ function AdminPaymentsPage() {
                 <TableHead>Amount</TableHead>
                 <TableHead>Method</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Reference</TableHead>
+                <TableHead>Reference/Txn ID</TableHead>
+                <TableHead>Screenshot</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -140,9 +153,16 @@ function AdminPaymentsPage() {
                     <TableCell>{labelPaymentMethod(payment.payment_method)}</TableCell>
                     <TableCell><PaymentStatusBadge status={payment.payment_status} /></TableCell>
                     <TableCell className="max-w-[140px] truncate text-xs text-muted-foreground">
-                      {payment.stripe_reference ?? "—"}
+                      {payment.transaction_id || payment.stripe_reference || "—"}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell>
+                      {payment.payment_screenshot_url ? (
+                        <a href={payment.payment_screenshot_url} target="_blank" rel="noreferrer" className="text-xs text-accent underline">
+                          View
+                        </a>
+                      ) : "—"}
+                    </TableCell>
+                    <TableCell className="text-right space-x-2">
                       {payment.payment_status === "paid" && (
                         <Button
                           size="sm"
@@ -151,6 +171,26 @@ function AdminPaymentsPage() {
                         >
                           Mark refunded
                         </Button>
+                      )}
+                      {payment.payment_status === "pending_verification" && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700 border-green-200"
+                            onClick={() => statusMutation.mutate({ id: payment.id, status: "paid" })}
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 border-red-200"
+                            onClick={() => statusMutation.mutate({ id: payment.id, status: "rejected" })}
+                          >
+                            Reject
+                          </Button>
+                        </>
                       )}
                     </TableCell>
                   </TableRow>

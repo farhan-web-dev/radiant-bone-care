@@ -5,7 +5,7 @@ import ayubLogo from "@/assets/ayub-logo.png";
 
 const experiences = [
   {
-    role: "Ex-President & General Surgeon",
+    role: "Ex-Resident & General Surgeon",
     hospital: "Pakistan Institute of Medical Sciences (PIMS)",
     location: "Islamabad, Pakistan",
     logo: pimsLogo,
@@ -18,7 +18,7 @@ const experiences = [
     ]
   },
   {
-    role: "Ex-President & Orthopaedic Surgeon",
+    role: "Ex-Resident & Orthopaedic Surgeon",
     hospital: "Ayub Medical Complex",
     location: "Abbottabad, Pakistan",
     logo: ayubLogo,

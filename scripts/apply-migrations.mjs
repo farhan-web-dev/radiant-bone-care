@@ -66,6 +66,7 @@ async function connectClient() {
     const client = new pg.Client({
       connectionString: url,
       ssl: { rejectUnauthorized: false },
+      connectionTimeoutMillis: 3000,
     });
     try {
       await client.connect();

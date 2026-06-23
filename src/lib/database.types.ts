@@ -8,8 +8,8 @@ export type Json =
 
 export type BookingType = "clinic" | "online";
 export type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
-export type PaymentStatus = "pending" | "paid" | "refunded";
-export type PaymentMethod = "clinic" | "stripe";
+export type PaymentStatus = "pending" | "paid" | "refunded" | "pending_verification" | "rejected";
+export type PaymentMethod = "clinic" | "stripe" | "easypaisa" | "jazzcash";
 
 export interface PendingBookingPayload {
   full_name: string;
@@ -62,6 +62,8 @@ export interface Database {
           payment_status: PaymentStatus;
           payment_method: PaymentMethod | null;
           stripe_reference: string | null;
+          transaction_id: string | null;
+          payment_screenshot_url: string | null;
           created_at: string;
         };
         Insert: {
@@ -79,6 +81,8 @@ export interface Database {
           payment_status?: PaymentStatus;
           payment_method?: PaymentMethod | null;
           stripe_reference?: string | null;
+          transaction_id?: string | null;
+          payment_screenshot_url?: string | null;
           created_at?: string;
         };
         Update: {
@@ -96,6 +100,8 @@ export interface Database {
           payment_status?: PaymentStatus;
           payment_method?: PaymentMethod | null;
           stripe_reference?: string | null;
+          transaction_id?: string | null;
+          payment_screenshot_url?: string | null;
           created_at?: string;
         };
         Relationships: [
@@ -143,6 +149,8 @@ export interface Database {
           payment_method: PaymentMethod;
           payment_status: PaymentStatus;
           stripe_reference: string | null;
+          transaction_id: string | null;
+          payment_screenshot_url: string | null;
           created_at: string;
         };
         Insert: {
@@ -152,6 +160,8 @@ export interface Database {
           payment_method: PaymentMethod;
           payment_status?: PaymentStatus;
           stripe_reference?: string | null;
+          transaction_id?: string | null;
+          payment_screenshot_url?: string | null;
           created_at?: string;
         };
         Update: {
@@ -161,6 +171,8 @@ export interface Database {
           payment_method?: PaymentMethod;
           payment_status?: PaymentStatus;
           stripe_reference?: string | null;
+          transaction_id?: string | null;
+          payment_screenshot_url?: string | null;
           created_at?: string;
         };
         Relationships: [

@@ -34,12 +34,16 @@ export function labelBookingStatus(status: BookingStatus) {
 }
 
 export function labelPaymentStatus(status: PaymentStatus) {
+  if (status === "pending_verification") return "Pending Verification";
   return status.charAt(0).toUpperCase() + status.slice(1);
 }
 
 export function labelPaymentMethod(method: PaymentMethod | null) {
   if (!method) return "—";
-  return method === "clinic" ? "Pay at clinic" : "Stripe";
+  if (method === "clinic") return "Pay at clinic";
+  if (method === "easypaisa") return "Easypaisa";
+  if (method === "jazzcash") return "JazzCash";
+  return "Stripe";
 }
 
 export function todayIsoDate() {

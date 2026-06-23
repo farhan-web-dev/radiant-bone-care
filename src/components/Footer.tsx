@@ -58,7 +58,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-primary-foreground/70">
               <li className="flex gap-2"><Phone className="w-4 h-4 mt-0.5 text-accent" /> 0348-8100374</li>
               <li className="flex gap-2"><Phone className="w-4 h-4 mt-0.5 text-accent" /> 0345-3111297</li>
-              <li className="flex gap-2"><Mail className="w-4 h-4 mt-0.5 text-accent" /> info@drabidalikhan.com</li>
+              <li className="flex gap-2"><Mail className="w-4 h-4 mt-0.5 text-accent" /> primesurgicalclinic@gmail.com</li>
               <li className="flex gap-2"><MapPin className="w-4 h-4 mt-0.5 text-accent" /> Basham Plaza opposite to King Abdullah Teaching Hospital, Mansehra</li>
             </ul>
           </div>

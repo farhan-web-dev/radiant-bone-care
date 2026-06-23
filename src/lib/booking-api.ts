@@ -184,6 +184,71 @@ export async function getAppointmentById(appointmentId: string) {
   return data;
 }
 
+export async function uploadPaymentScreenshot(file: File): Promise<string> {
+  if (!isSupabaseConfigured()) {
+    throw new BookingError("Booking system is not configured.");
+  }
+
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+  const filePath = `screenshots/${fileName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("payment_screenshots")
+    .upload(filePath, file);
+
+  if (uploadError) {
+    throw new BookingError("Failed to upload screenshot: " + uploadError.message);
+  }
+
+  const { data } = supabase.storage
+    .from("payment_screenshots")
+    .getPublicUrl(filePath);
+
+  return data.publicUrl;
+}
+
+export async function createManualPaymentAppointment(input: {
+  fullName: string;
+  email: string;
+  phone: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  paymentMethod: "easypaisa" | "jazzcash";
+  transactionId: string;
+  paymentScreenshotUrl?: string;
+  notes?: string;
+  service?: string;
+  bookingType?: "clinic" | "online";
+}): Promise<string> {
+  if (!isSupabaseConfigured()) {
+    throw new BookingError("Booking system is not configured.");
+  }
+
+  const { data, error } = await supabase.rpc("create_manual_payment_appointment", {
+    p_full_name: input.fullName,
+    p_email: input.email,
+    p_phone: input.phone,
+    p_appointment_date: input.appointmentDate,
+    p_appointment_time: input.appointmentTime,
+    p_payment_method: input.paymentMethod,
+    p_transaction_id: input.transactionId,
+    p_payment_screenshot_url: input.paymentScreenshotUrl ?? null,
+    p_notes: input.notes ?? null,
+    p_service: input.service ?? null,
+    p_booking_type: input.bookingType ?? "clinic",
+  });
+
+  if (error) {
+    if (error.code === "23505") {
+      throw new BookingError("This appointment slot is already booked.", error.code);
+    }
+    throw new BookingError(error.message, error.code);
+  }
+
+  return data as string;
+}
+
 export const BOOKING_SESSION_KEYS = {
   flow: "radiant_booking_flow",
   refId: "radiant_booking_ref",
