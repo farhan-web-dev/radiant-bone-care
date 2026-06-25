@@ -5,20 +5,20 @@ import ayubLogo from "@/assets/ayub-logo.png";
 
 const experiences = [
   {
-    role: "Ex-Resident & General Surgeon",
+    role: "Ex-Resident  General Surgeon",
     hospital: "Pakistan Institute of Medical Sciences (PIMS)",
     location: "Islamabad, Pakistan",
     logo: pimsLogo,
     badge: "Clinical Leadership",
     highlights: [
-      "Department Leadership: Headed administrative & clinical surgery operations, setting exceptional standards of care.",
+      "Department Leadership: Headed administrative clinical surgery operations, setting exceptional standards of care.",
       "Complex Trauma & Surgery: Specialized in advanced general, emergency, and trauma surgical procedures.",
       "Residency Mentorship: Formulated training curriculums and mentored hundreds of surgical residents and fellows.",
-      "Quality Governance: Led internal medical boards to improve surgical safety and clinical outcomes."
-    ]
+      "Quality Governance: Led internal medical boards to improve surgical safety and clinical outcomes.",
+    ],
   },
   {
-    role: "Ex-Resident & Orthopaedic Surgeon",
+    role: "Ex-Resident Orthopaedic Surgeon",
     hospital: "Ayub Medical Complex",
     location: "Abbottabad, Pakistan",
     logo: ayubLogo,
@@ -27,9 +27,9 @@ const experiences = [
       "Orthopaedic Division Head: Orchestrated the orthopaedic and joint reconstructive department's growth.",
       "Trauma Specialist: Spearheaded emergency bone and joint trauma interventions for complex fracture cases.",
       "Academic Leadership: Conducted advanced research programs and clinical symposiums for orthopedic surgeons.",
-      "Patient Recovery Advocacy: Structured comprehensive post-surgical rehabilitation guidelines for bone healing."
-    ]
-  }
+      "Patient Recovery Advocacy: Structured comprehensive post-surgical rehabilitation guidelines for bone healing.",
+    ],
+  },
 ];
 
 export default function Experience() {
@@ -49,7 +49,7 @@ export default function Experience() {
           >
             Clinical Leadership
           </motion.span>
-          
+
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -59,7 +59,7 @@ export default function Experience() {
           >
             Distinguished <span className="gradient-text">Medical Leadership</span> &amp; Experience
           </motion.h2>
-          
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -67,8 +67,8 @@ export default function Experience() {
             transition={{ delay: 0.2 }}
             className="mt-6 text-muted-foreground text-lg leading-relaxed"
           >
-            A legacy of excellence in surgical innovation, administrative leadership, and 
-            academic mentorship at Pakistan's premier medical complexes.
+            A legacy of excellence in surgical innovation, administrative leadership, and academic
+            mentorship at Pakistan's premier medical complexes.
           </motion.p>
         </div>
 
@@ -96,7 +96,7 @@ export default function Experience() {
                       loading="lazy"
                     />
                   </div>
-                  
+
                   <div>
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase text-accent mb-2">
                       <Award className="w-3.5 h-3.5" />
@@ -120,7 +120,7 @@ export default function Experience() {
                   </span>
                   <span className="flex items-center gap-1 bg-primary/5 px-2.5 py-1 rounded-md text-primary">
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    Senior Consultant &amp; Former President
+                    Senior Consultant &amp; Former Resident
                   </span>
                 </div>
 

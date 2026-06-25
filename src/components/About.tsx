@@ -21,7 +21,7 @@ const cards = [
 ];
 
 const degrees = [
-  { name: "MBBS (Pb)", label: "Bachelor of Medicine & Surgery" },
+  { name: "MBBS (DWO)", label: "Bachelor of Medicine & Surgery" },
   { name: "FCPS (Ortho. Surgery)", label: "Fellowship of College of Physicians & Surgeons" },
   { name: "IMM (Gen. Surgery)", label: "Intermediate Module in General Surgery" },
   { name: "FIAS (Pakistan)", label: "Fellow of International Association of Surgeons" },
